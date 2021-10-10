@@ -65,7 +65,7 @@
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/notion_qna.png">
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/1.png">
 <meta property="article:published_time" content="2021-10-08T04:55:20.000Z">
-<meta property="article:modified_time" content="2021-10-10T21:36:08.127Z">
+<meta property="article:modified_time" content="2021-10-10T21:50:49.378Z">
 <meta property="article:author" content="Yohan Lee">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://cheonggyemountain-sherpa.github.io/images/profile.png">
@@ -222,7 +222,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      79분만에 읽기
+      80분만에 읽기
     </span>
   
 
@@ -256,7 +256,39 @@
             <div class="markdown-body">
               <h1 id="청계산셰르파의-KLUE-RE-등반일지"><a href="#청계산셰르파의-KLUE-RE-등반일지" class="headerlink" title="청계산셰르파의 KLUE-RE 등반일지"></a>청계산셰르파의 KLUE-RE 등반일지</h1><p>약 12일동안 참여했던 P Stage의 <code>KLUE - Relation Extraction</code> 대회의 Wrap up Report이자 회고록입니다. 철저한 <code>기록</code>과 <code>공유</code>에 공감한 7명의 팀원이 처음 합을 맞추었기 때문에 어설픈 점도 있었지만, 그간의 생생한 기록들을 바탕으로 어떻게 서로가 서로의 <code>셰르파</code>로써 등반을 완료할 수 있었는지 저희의 경험을 나누고자 합니다.</p>
 <p>물론 미흡한 점도 있었고, 여러 시행착오를 겪었지만 결과적으로는 팀원 모두가 만족한 협업이었다는 점에서 지난 대회보다 많은 성장을 할 수 있었다고 느낄 수 있었습니다. 저희의 경험이 어떠한 형태로든 도움이 되고, 좋은 레퍼런스가 되기를 바라며 시작해보도록 하겠습니다.</p>
+<br>
+
 <p><strong>목차</strong></p>
+<ul>
+<li><a href="#%E2%9A%94%EF%B8%8F-%ED%8C%80-%EC%86%8C%EA%B0%9C">팀소개</a><ul>
+<li><a href="#%F0%9F%A4%9C-%EB%B6%80%EB%A1%9D-%ED%8C%80%EC%9B%90%EB%93%A4-%ED%95%9C%EB%A7%88%EB%94%94">청계산셰르파</a></li>
+<li><a href="#%F0%9F%91%A8%E2%80%8D%F0%9F%91%A8%E2%80%8D%F0%9F%91%A6%E2%80%8D%F0%9F%91%A6-%EC%B2%AD%EA%B3%84%EC%82%B0%EC%85%B0%EB%A5%B4%ED%8C%8C%EB%93%A4">청계산셰르파들</a></li>
+</ul>
+</li>
+<li><a href="#%F0%9F%94%8E-%EB%8C%80%ED%9A%8C-%EA%B0%9C%EC%9A%94">대회개요</a></li>
+<li><a href="#%F0%9F%A4%9D-%ED%98%91%EC%97%85">협업</a><ul>
+<li><a href="#%F0%9F%A5%BE-%EC%82%AC%EC%A0%84%EB%85%BC%EC%9D%98">사전논의</a></li>
+<li><a href="#%E2%9A%99%EF%B8%8F-%ED%98%91%EC%97%85%ED%88%B4">협업툴</a></li>
+<li><a href="#%F0%9F%92%BB-%EC%BD%94%EB%93%9C-%EA%B4%80%EB%A6%AC">코드관리</a></li>
+<li><a href="#%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC-%EC%B2%B4%EA%B3%84%EC%A0%81%EC%9D%B8-%EC%8B%A4%ED%97%98">체계적인 실험</a></li>
+</ul>
+</li>
+<li><a href="#%F0%9F%9B%8B-Data-Experiments">Data Experiments</a><ul>
+<li><a href="#%F0%9F%91%81-Data-EDA">Data EDA</a></li>
+<li><a href="#%F0%9F%92%AA-Data-Augmentation">Data Augmentation</a></li>
+<li><a href="#%F0%9F%94%A7-Data-Preprocessing-amp-Tokenizer">Data Preprocessing</a></li>
+</ul>
+</li>
+<li><a href="#%F0%9F%A7%98-Modeling">Modeling</a></li>
+<li><a href="#%F0%9F%8D%9C-Ensemble">Ensemble</a><ul>
+<li><a href="#%F0%9F%91%A8%E2%80%8D%F0%9F%8E%A8-%EC%95%99%EC%83%81%EB%B8%94-%EA%B9%8E%EB%8A%94-%EB%85%B8%EC%9D%B8%EA%B3%BC-%EA%B8%B0%EB%8F%84%EB%A9%94%ED%83%80">앙상블 깎는 노인과 기도메타</a></li>
+</ul>
+</li>
+<li><a href="#%F0%9F%92%AF-Good-Practice">Good Practice</a></li>
+<li><a href="#%F0%9F%92%8C-Thanks-to">Thanks to</a></li>
+<li><a href="#%EB%A7%88%EC%A7%80%EB%A7%89%EC%9C%BC%EB%A1%9C">마지막으로</a></li>
+<li><a href="#%F0%9F%A4%9C-%EB%B6%80%EB%A1%9D-%ED%8C%80%EC%9B%90%EB%93%A4-%ED%95%9C%EB%A7%88%EB%94%94">부록: 팀원들 한마디</a></li>
+</ul>
 <h2 id="⚔️-팀-소개"><a href="#⚔️-팀-소개" class="headerlink" title="⚔️ 팀 소개"></a>⚔️ 팀 소개</h2><h3 id="⛰-청계산셰르파"><a href="#⛰-청계산셰르파" class="headerlink" title="⛰ 청계산셰르파"></a>⛰ 청계산셰르파</h3><p align="center">
     <img src="/images/profile.png" srcset="/img/loading.gif" lazyload style="display: inline" height="120px">
     <img src="/images/2.png" srcset="/img/loading.gif" lazyload style="display: inline" height="120px">
