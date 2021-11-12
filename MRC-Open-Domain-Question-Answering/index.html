@@ -36,6 +36,7 @@
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/image-20211106222959110.png">
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/image-20211106223121104.png">
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/image-20211109124548155.png">
+<meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/baseline_refactoring.png">
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/image-20211109060404922.png">
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/zNfTAJg1U-EGGBaiosZoq7JkersOT6JrKY7fJn_LHEK-SgcNd2D6O2n6kT-8w8iMjwjnTQxwjZfle2LJD1FpaLvNLFVQYwafhguw340hXHoSkrP1H6vuoM9h5wLYycUP-WE-Od5D.png">
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/8.png">
@@ -77,7 +78,7 @@
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/image-20211111133432522.png">
 <meta property="og:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/ape.png">
 <meta property="article:published_time" content="2021-11-10T14:47:09.000Z">
-<meta property="article:modified_time" content="2021-11-12T05:05:33.001Z">
+<meta property="article:modified_time" content="2021-11-12T07:54:38.846Z">
 <meta property="article:author" content="Yohan Lee">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://cheonggyemountain-sherpa.github.io/images/mrc/image-20211106210830331.png">
@@ -225,7 +226,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      약 36k 단어
+      약 35k 단어
     </span>
   
 
@@ -340,50 +341,7 @@
 <p>또한 위의 이유와 더불어 nested function은 그 특성상 run_mrc 상에서 정의된 변수, 객체 등에 접근할 수 있는데, <span class="linear_highlight">이로 인해 어떤 변수나 객체 등이 어느 nested function 안에서 변하거나 변하지 않았는지에 대해 파악하는 것에 어려움</span>이 있었습니다. 그리고 이러한 nested function 이 Huggingface Trainer 내부에서 동작해야하기 때문에 <code>train.py</code> 와 <code>inference.py</code> 등의 스크립트에서도 <span class="linear_highlight">중복으로 존재</span>했으며 Debugging 을 위해서는 Huggingface 의 코드들을 일일이 덧붙여가며 확인해야 했습니다.</p>
 <h2 id="재구성한-베이스라인-코드"><a href="#재구성한-베이스라인-코드" class="headerlink" title="재구성한 베이스라인 코드"></a>재구성한 베이스라인 코드</h2><p>이러한 문제점들을 인식한 뒤, huggingface 와의 호환성을 유지하며 학습 과정에 쓰이는 입력과 출력 형식을 Customizing 하기 위해 huggingface의 <code>Trainer</code> 클래스를 상속받아 본인만의 <code>Custom Trainer</code> 클래스를 작성하고, 이를 통해 학습을 진행하도록 코드를 재구성하였습니다. 하지만 문제는 <code>Custom Trainer</code> 클래스를 작성하며 이미 존재하는 몇몇 method 를 task에 맞게 새로 작성하여 덮어씌웠는데,<br>이 과정에서 Huggingface 와 의존성이 존재하는 코드들을 대부분 제외시켰다는 것에 있었습니다. 이렇게 작성된 코드는 향후 다양한 실험을 진행할 때 방해요소가 되겠다는 생각을 하였으며, Task specific 한 방식으로 구성하는 것보다는 미리 <span class="linear_highlight"> 라이브러리와의 호환성 문제를 최소화하는 방향으로 코드를 재작성하는 것이 좋겠다</span>는 판단을 하게 되었습니다.</p>
 <p>최종적으로 사용된 구조는 아래와 같습니다.</p>
-<table>
-<thead>
-<tr>
-<th align="center">스크립트</th>
-<th align="center">베이스라인</th>
-<th align="center">재구성 후</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><code>train.py</code></td>
-<td align="center">중복작성된 processing 함수들</td>
-<td align="center"><code>processes.py</code>로부터 import</td>
-</tr>
-<tr>
-<td align="center"><code>inference.py</code></td>
-<td align="center">^^</td>
-<td align="center">^^</td>
-</tr>
-<tr>
-<td align="center"><code>utils_qa.py</code></td>
-<td align="center">postprocessing 함수 및 유틸리티 함수들</td>
-<td align="center">X</td>
-</tr>
-<tr>
-<td align="center"><code>trainer_qa.py</code></td>
-<td align="center">Custom huggingface Trainer 클래스</td>
-<td align="center">X</td>
-</tr>
-<tr>
-<td align="center"><code>processes.py</code></td>
-<td align="center">X</td>
-<td align="center">processing 함수들</td>
-</tr>
-<tr>
-<td align="center"><code>metric.py</code></td>
-<td align="center">X</td>
-<td align="center">점수 산출을 위한 metric 함수</td>
-</tr>
-<tr>
-<td align="center"><code>utils.py</code></td>
-<td align="center">X</td>
-<td align="center">유틸리티 함수</td>
-</tr>
-</tbody></table>
+<p><img src="/images/mrc/baseline_refactoring.png" srcset="/img/loading.gif" lazyload></p>
 <p>위에서 언급했던 문제를 해결하기 위해 postprocessing 과정을 변경하였으며, huggingface의 기본 <code>Trainer</code>를 사용해 학습할 수 있도록 하였습니다. 이렇게 구성된 <code>train.py</code> 는 아래와 같습니다.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">train</span>():</span><br>    tokenizer, model, dataset 등의 initialization<br>    trainset, evalset의 mapping<br><br>    trainer의 initialization<br>    trainer.train()<br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    train()<br></code></pre></td></tr></table></figure>
 
